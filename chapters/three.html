@@ -451,11 +451,53 @@ title="Print to PDF"
 <p>The satellite image used in this chapter is provided by the Planet company. Planet company has an <a class="reference external" href="https://www.planet.com/markets/education-and-research/">Education and Research Program</a> that provides limited, non-commercial access to PlanetScope imagery. The product used in this chapter is the Planet orthorectified product <code class="docutils literal notranslate"><span class="pre">PS2</span></code>, which includes four bands, blue (Band 1, 455-515 nm), green (Band 2, 500-590 nm), red (Band 3, 590-670 nm), and near-infrared (Band4, 780-860 nm). The spatial resolution of the image is 3.7 meters. As a first step, we visualize and inspect the Planet data. The following block of code reads the Planet image over a region in California and plots the results.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">huggingface_hub</span> <span class="kn">import</span> <span class="n">hf_hub_download</span>
+
+<span class="n">repo_id</span> <span class="o">=</span> <span class="s2">&quot;geosmart/scm_geosmart_use_case&quot;</span>
+<span class="n">raster_file</span> <span class="o">=</span> <span class="s2">&quot;data/planet/20180528_181110_1025_3B_AnalyticMS_SR_clip.tif&quot;</span>
+<span class="n">sample_100k_file</span> <span class="o">=</span> <span class="s2">&quot;./data/samples/sample_100K.csv&quot;</span>
+<span class="n">cache_dir</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+
+<span class="n">dir_raster</span> <span class="o">=</span> <span class="n">hf_hub_download</span><span class="p">(</span><span class="n">repo_id</span><span class="o">=</span><span class="n">repo_id</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">raster_file</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">repo_type</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">)</span>
+<span class="n">dir_sample_100k</span> <span class="o">=</span> <span class="n">hf_hub_download</span><span class="p">(</span><span class="n">repo_id</span><span class="o">=</span><span class="n">repo_id</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">sample_100k_file</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">repo_type</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "8b8a14dc17f84d5a95c321e9e61f4587", "version_major": 2, "version_minor": 0}
+</script><script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "f6de4f3f3fbe47709fc98b3314f6b59a", "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># https://stackoverflow.com/questions/53581278/test-if-notebook-is-running-on-google-colab</span>
+<span class="k">def</span> <span class="nf">is_running_on_colab</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">google.colab</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="n">is_running_on_colab</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+    <span class="o">!</span>wget https://raw.githubusercontent.com/geo-smart/scm_geosmart_use_case/main/book/chapters/functions_book_chapter_SCA.py
+
+<span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+    <span class="o">%</span><span class="k">pip</span> install rasterio
+    <span class="o">%</span><span class="k">pip</span> install pandas
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import functions and packages</span>
 <span class="kn">from</span> <span class="nn">functions_book_chapter_SCA</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">rasterio</span>
 
-<span class="n">dir_raster</span> <span class="o">=</span> <span class="s1">&#39;./data/planet/20180528_181110_1025_3B_AnalyticMS_SR_clip.tif&#39;</span>
 <span class="n">planet</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">dir_raster</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">/</span><span class="mi">10000</span>
 <span class="n">planet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">planet</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">planet</span><span class="p">)</span> <span class="c1"># the default nan data value is 0, replace with np.nan</span>
 
@@ -478,45 +520,10 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">CPLE_OpenFailedError</span><span class="g g-Whitespace">                      </span>Traceback (most recent call last)
-<span class="nn">File rasterio/_base.pyx:310,</span> in <span class="ni">rasterio._base.DatasetBase.__init__</span><span class="nt">()</span>
-
-<span class="nn">File rasterio/_base.pyx:221,</span> in <span class="ni">rasterio._base.open_dataset</span><span class="nt">()</span>
-
-<span class="nn">File rasterio/_err.pyx:221,</span> in <span class="ni">rasterio._err.exc_wrap_pointer</span><span class="nt">()</span>
-
-<span class="ne">CPLE_OpenFailedError</span>: ./data/planet/20180528_181110_1025_3B_AnalyticMS_SR_clip.tif: No such file or directory
-
-<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
-
-<span class="ne">RasterioIOError</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">5</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">functions_book_chapter_SCA</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">dir_raster</span> <span class="o">=</span> <span class="s1">&#39;./data/planet/20180528_181110_1025_3B_AnalyticMS_SR_clip.tif&#39;</span>
-<span class="ne">----&gt; </span><span class="mi">5</span> <span class="n">planet</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">dir_raster</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">/</span><span class="mi">10000</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">planet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">planet</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">planet</span><span class="p">)</span> <span class="c1"># the default nan data value is 0, replace with np.nan</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
-
-<span class="nn">File /opt/homebrew/Caskroom/miniconda/base/envs/scm_geosmart/lib/python3.10/site-packages/rasterio/env.py:451,</span> in <span class="ni">ensure_env_with_credentials.&lt;locals&gt;.wrapper</span><span class="nt">(*args, **kwds)</span>
-<span class="g g-Whitespace">    </span><span class="mi">448</span>     <span class="n">session</span> <span class="o">=</span> <span class="n">DummySession</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">450</span> <span class="k">with</span> <span class="n">env_ctor</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">451</span>     <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
-
-<span class="nn">File /opt/homebrew/Caskroom/miniconda/base/envs/scm_geosmart/lib/python3.10/site-packages/rasterio/__init__.py:304,</span> in <span class="ni">open</span><span class="nt">(fp, mode, driver, width, height, count, crs, transform, dtype, nodata, sharing, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">301</span> <span class="n">path</span> <span class="o">=</span> <span class="n">_parse_path</span><span class="p">(</span><span class="n">raw_dataset_path</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">303</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">304</span>     <span class="n">dataset</span> <span class="o">=</span> <span class="n">DatasetReader</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="n">driver</span><span class="p">,</span> <span class="n">sharing</span><span class="o">=</span><span class="n">sharing</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">305</span> <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;r+&quot;</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">306</span>     <span class="n">dataset</span> <span class="o">=</span> <span class="n">get_writer_for_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="n">driver</span><span class="p">)(</span>
-<span class="g g-Whitespace">    </span><span class="mi">307</span>         <span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="n">driver</span><span class="p">,</span> <span class="n">sharing</span><span class="o">=</span><span class="n">sharing</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-<span class="g g-Whitespace">    </span><span class="mi">308</span>     <span class="p">)</span>
-
-<span class="nn">File rasterio/_base.pyx:312,</span> in <span class="ni">rasterio._base.DatasetBase.__init__</span><span class="nt">()</span>
-
-<span class="ne">RasterioIOError</span>: ./data/planet/20180528_181110_1025_3B_AnalyticMS_SR_clip.tif: No such file or directory
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x17ba973a0&gt;
 </pre></div>
 </div>
+<img alt="../_images/three_4_1.png" src="../_images/three_4_1.png" />
 </div>
 </div>
 <p>The figure above shows the surface reflectance of the four bands in the PlanetScope image <code class="docutils literal notranslate"><span class="pre">20180528_181110_1025_3B_AnalyticMS_SR_clip.tif</span></code> within a region of the Tuolumne Basin, California. The red and orange colors represent high surface reflectance, while the cyan and dark blue colors represent low surface reflectance. Because snow has a very high reflectance in the visible bands, those red and orange regions are very likely to be covered by snow.</p>
@@ -525,7 +532,9 @@ We extracted the surface reflectance of all bands of each pixel inside the ROIs 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># read model input features and labels </span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./data/samples/sample_100K.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">dir_sample_100k</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sample dimentions:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(),</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span><span class="s1">&#39;green&#39;</span><span class="p">,</span><span class="s1">&#39;red&#39;</span><span class="p">,</span><span class="s1">&#39;nir&#39;</span><span class="p">]]</span>

@@ -17,48 +17,25 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-# import functions and packages
-from functions_book_chapter_SCA import *
-import rasterio
+from huggingface_hub import hf_hub_download
 
-dir_raster = './data/planet/20180528_181110_1025_3B_AnalyticMS_SR_clip.tif'
-planet = rasterio.open(dir_raster).read()/10000
-planet = np.where(planet[0,:,:] == 0, np.nan, planet) # the default nan data value is 0, replace with np.nan
+repo_id = "geosmart/scm_geosmart_use_case"
+raster_file = "data/planet/20180528_181110_1025_3B_AnalyticMS_SR_clip.tif"
+sample_100k_file = "./data/samples/sample_100K.csv"
+cache_dir = "."
 
-fig, axs = plt.subplots(2,2,figsize=(15,7.5))
-im1 = axs[0,0].imshow(planet[0,:,:],cmap='jet')
-axs[0,0].set_title("Surface reflectance of blue band", fontsize=16)
+dir_raster = hf_hub_download(repo_id=repo_id, filename=raster_file, cache_dir=cache_dir, repo_type="dataset")
+dir_sample_100k = hf_hub_download(repo_id=repo_id, filename=sample_100k_file, cache_dir=cache_dir, repo_type="dataset")
 
-im2 = axs[0,1].imshow(planet[1,:,:], cmap='jet')
-axs[0,1].set_title("Surface reflectance of green band", fontsize=16)
-
-im3 = axs[1,0].imshow(planet[2,:,:], cmap='jet')
-axs[1,0].set_title("Surface reflectance of red band", fontsize=16)
-
-im4 = axs[1,1].imshow(planet[3,:,:], cmap='jet')
-axs[1,1].set_title("Surface reflectance of NIR band", fontsize=16)
-
-cbar_ax = fig.add_axes([0.95, 0.15, 0.02, 0.7])
-fig.colorbar(im1, cax=cbar_ax)
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
-Input [0;32mIn [1][0m, in [0;36m<cell line: 2>[0;34m()[0m
-[1;32m      1[0m [38;5;66;03m# import functions and packages[39;00m
-[0;32m----> 2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mfunctions_book_chapter_SCA[39;00m [38;5;28;01mimport[39;00m [38;5;241m*[39m
-[1;32m      3[0m [38;5;28;01mimport[39;00m [38;5;21;01mrasterio[39;00m
-[1;32m      5[0m dir_raster [38;5;241m=[39m [38;5;124m'[39m[38;5;124m./data/planet/20180528_181110_1025_3B_AnalyticMS_SR_clip.tif[39m[38;5;124m'[39m
+Input [0;32mIn [1][0m, in [0;36m<cell line: 1>[0;34m()[0m
+[0;32m----> 1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mhuggingface_hub[39;00m [38;5;28;01mimport[39;00m hf_hub_download
+[1;32m      3[0m repo_id [38;5;241m=[39m [38;5;124m"[39m[38;5;124mgeosmart/scm_geosmart_use_case[39m[38;5;124m"[39m
+[1;32m      4[0m raster_file [38;5;241m=[39m [38;5;124m"[39m[38;5;124mdata/planet/20180528_181110_1025_3B_AnalyticMS_SR_clip.tif[39m[38;5;124m"[39m
 
-File [0;32m~/work/scm_geosmart_use_case/scm_geosmart_use_case/book/chapters/functions_book_chapter_SCA.py:5[0m, in [0;36m<module>[0;34m[0m
-[1;32m      1[0m [38;5;124;03m'''[39;00m
-[1;32m      2[0m [38;5;124;03mThis script includes all packages and functions required by the book chapter[39;00m
-[1;32m      3[0m [38;5;124;03m'''[39;00m
-[1;32m      4[0m [38;5;66;03m# evaluate random forest algorithm for classification[39;00m
-[0;32m----> 5[0m [38;5;28;01mfrom[39;00m [38;5;21;01mnumpy[39;00m [38;5;28;01mimport[39;00m arange
-[1;32m      6[0m [38;5;28;01mfrom[39;00m [38;5;21;01msklearn[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdatasets[39;00m [38;5;28;01mimport[39;00m make_classification
-[1;32m      7[0m [38;5;28;01mfrom[39;00m [38;5;21;01msklearn[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodel_selection[39;00m [38;5;28;01mimport[39;00m cross_val_score
-
-[0;31mModuleNotFoundError[0m: No module named 'numpy'
-ModuleNotFoundError: No module named 'numpy'
+[0;31mModuleNotFoundError[0m: No module named 'huggingface_hub'
+ModuleNotFoundError: No module named 'huggingface_hub'
 
